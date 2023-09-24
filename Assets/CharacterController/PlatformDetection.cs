@@ -57,8 +57,10 @@ public class PlatformDetection : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(transform.position, new Vector3(_character.Controller.radius * 1.5f, _character.Controller.height, _character.Controller.radius * 1.5f));
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - _rayDistance, transform.position.z), _character.Controller.radius);
+        Gizmos.DrawWireSphere(new Vector3(transform.position.x, transform.position.y - _rayDistance, transform.position.z), _character.Controller.radius);
     }
 #endif
 }
