@@ -14,7 +14,7 @@ public class PlatformDetection : MonoBehaviour
         _maxPlatformNormalAngle = _character.Controller.slopeLimit;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         CheckPlatform();
     }
@@ -27,7 +27,7 @@ public class PlatformDetection : MonoBehaviour
             return;
         }
 
-        var isHit = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, _rayDistance, _platformMask);
+        var isHit = Physics.SphereCast(transform.position, _character.Controller.radius, transform.TransformDirection(Vector3.down), out var hit, _rayDistance, _platformMask);
         if (!isHit)
         {
             SetNullParrent();
@@ -58,8 +58,7 @@ public class PlatformDetection : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        var downVector = new Vector3(transform.position.x, transform.position.y - _rayDistance, transform.position.z);
-        Gizmos.DrawLine(transform.position, downVector);
+        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - _rayDistance, transform.position.z), _character.Controller.radius);
     }
 #endif
 }

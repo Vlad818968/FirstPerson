@@ -7,6 +7,6 @@ public class moveTest : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position = Vector3.Lerp(transform.position, moveTransform.position, Speed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, moveTransform.position, Speed * Time.fixedDeltaTime);
     }
 }
