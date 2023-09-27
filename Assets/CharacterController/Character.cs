@@ -25,12 +25,13 @@ public class Character : MonoBehaviour
     private Vector3 _velosity;
     private float _groundDistance = 0.4f;
 
-    private Vector2 _rotation = Vector2.zero;
+    private Vector2 _rotation;
     private const string _xAxis = "Mouse X";
     private const string _yAxis = "Mouse Y";
 
     private void Awake()
     {
+        _rotation.x = transform.localRotation.eulerAngles.y;
         HideCursorAtSturtup();
     }
 
@@ -60,7 +61,7 @@ public class Character : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 move = transform.right * x + transform.forward * z;
-        Controller.Move(move * _speed * Time.deltaTime);
+        Controller.Move(Vector3.ClampMagnitude(move, 1f) * _speed * Time.deltaTime);
     }
 
     private void Gravity()
