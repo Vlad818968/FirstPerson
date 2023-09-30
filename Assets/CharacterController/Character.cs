@@ -92,7 +92,7 @@ public class Character : MonoBehaviour
         _rotation.x += Input.GetAxis(_xAxis) * _sensitivity;
         _rotation.y += Input.GetAxis(_yAxis) * _sensitivity;
         _rotation.y = Mathf.Clamp(_rotation.y, -_yRotationLimit, _yRotationLimit);
-        transform.localRotation = Quaternion.AngleAxis(_rotation.x, Vector3.up);
+        transform.rotation = Quaternion.AngleAxis(_rotation.x, Vector3.up);
         _camera.transform.localRotation = Quaternion.AngleAxis(_rotation.y, Vector3.left);
     }
 
