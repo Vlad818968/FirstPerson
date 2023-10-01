@@ -6,8 +6,14 @@ public class Character : MonoBehaviour
     public bool IsGrounded { get; private set; }
 
     [field: SerializeField] public CharacterController Controller { get; private set; }
+
     [Space]
     [SerializeField] private bool _hideCursor;
+    [SerializeField] private bool _useMobileInput;
+
+    [Header("Inputs")]
+    [SerializeField] private DecktopInput _decktopInput;
+    [SerializeField] private MobileInput _mobileInput;
 
     [Header("Camera")]
     [SerializeField] private Camera _camera;
@@ -26,13 +32,12 @@ public class Character : MonoBehaviour
     private float _groundDistance = 0.4f;
 
     private Vector2 _rotation;
-    private const string _xAxis = "Mouse X";
-    private const string _yAxis = "Mouse Y";
+
+    private IGameInput _gameInput;
 
     private void Awake()
     {
-        _rotation.x = transform.localRotation.eulerAngles.y;
-        HideCursorAtSturtup();
+        Init();
     }
 
     private void LateUpdate()
@@ -45,10 +50,15 @@ public class Character : MonoBehaviour
         IsGrounded = Physics.CheckSphere(_groundTransform.position, _groundDistance, _groundMask);
         Move();
         Gravity();
-        if (Input.GetKeyDown(_jumpKey))
-        {
-            Jump();
-        }
+    }
+
+    private void Init()
+    {
+        _gameInput = _useMobileInput ? _mobileInput : _decktopInput;
+        _mobileInput.gameObject.SetActive(_useMobileInput);
+        _rotation.x = transform.localRotation.eulerAngles.y;
+        _gameInput.OnJumpKeyPressed += Jump;
+        HideCursorAtSturtup();
     }
 
     public void AddForce(Vector3 force)
@@ -58,10 +68,8 @@ public class Character : MonoBehaviour
 
     private void Move()
     {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        Vector3 move = transform.right * x + transform.forward * z;
-        Controller.Move(Vector3.ClampMagnitude(move, 1f) * _speed * Time.deltaTime);
+        var moveDirection = _gameInput.MoveDirection.x * transform.right + _gameInput.MoveDirection.z * transform.forward;
+        Controller.Move(moveDirection * _speed * Time.deltaTime);
     }
 
     private void Gravity()
@@ -89,8 +97,8 @@ public class Character : MonoBehaviour
 
     private void CameraRotation()
     {
-        _rotation.x += Input.GetAxis(_xAxis) * _sensitivity;
-        _rotation.y += Input.GetAxis(_yAxis) * _sensitivity;
+        _rotation.x += _gameInput.CameraInput.x * _sensitivity;
+        _rotation.y += _gameInput.CameraInput.y * _sensitivity;
         _rotation.y = Mathf.Clamp(_rotation.y, -_yRotationLimit, _yRotationLimit);
         transform.rotation = Quaternion.AngleAxis(_rotation.x, Vector3.up);
         _camera.transform.localRotation = Quaternion.AngleAxis(_rotation.y, Vector3.left);
@@ -112,3 +120,4 @@ public class Character : MonoBehaviour
         Cursor.visible = false;
     }
 }
+
